@@ -195,6 +195,15 @@ public class NativeBitmap {
         return canvas;
     }
 
+    public Bitmap draw(){
+        Bitmap.Config conf = Bitmap.Config.ARGB_8888;
+        Bitmap canvas = Bitmap.createBitmap(width, height, conf);
+        canvas.setPixels(this.pixels, 0, width, 0, 0, width, height);
+
+        return canvas;
+
+    }
+
     public NativeBitmap(Bitmap bitmap){
         width = bitmap.getWidth();
         height = bitmap.getHeight();
