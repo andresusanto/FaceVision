@@ -15,6 +15,7 @@
         android:text="Simple Face Detection"
         android:id="@+id/button"
         android:layout_below="@+id/textView"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:onClick="pilihAktivitas" />
 
 </RelativeLayout>

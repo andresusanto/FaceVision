@@ -49,18 +49,18 @@ public class SimpleFace extends AppCompatActivity {
 
             Bitmap bmp = BitmapFactory.decodeFile(picturePath);
             NativeBitmap nativeBitmap = new NativeBitmap(bmp);
-            nativeBitmap.smooth();
+            //nativeBitmap.smooth();
             nativeBitmap.grayscaleBitmap();
 
             int w = bmp.getWidth(); int h = bmp.getHeight();
 
             float mask[][] = new float[3][];
 
-            mask[0] = new float[]{1, 1, -1};
-            mask[1] = new float[]{1, 0, -1};
-            mask[2] = new float[]{1, -1, -1};
+            mask[0] = new float[]{-1, 0, 1};
+            mask[1] = new float[]{-1, 0, 1};
+            mask[2] = new float[]{-1, 0, 1};
 
-            nativeBitmap.applyMask(mask);
+            nativeBitmap.applyDivergence();
 
             praProses.setImageBitmap(bmp);
             postProses.setImageBitmap(nativeBitmap.draw());

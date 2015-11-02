@@ -13,7 +13,7 @@ public class NativeBitmap {
 
     public static class RGB{
         int alpha, red, green, blue;
-        public RGB(){}
+        public RGB(){ red = 0; green = 0; blue = 0;}
         public RGB( int _red, int _green, int _blue) {
             red = _red;
             green = _green;
@@ -270,11 +270,113 @@ public class NativeBitmap {
 
                 RGB rgbAccum = new RGB();
 
-                rgbAccum.red = (int)redAccum;
-                rgbAccum.green = (int)greenAccum;
-                rgbAccum.blue = (int)blueAccum;
+                rgbAccum.red = Math.abs((int) redAccum);
+                rgbAccum.green = Math.abs((int)greenAccum);
+                rgbAccum.blue = Math.abs((int)blueAccum);
 
                 _pixels[i * width + j] = convertArgbToInt(rgbAccum);
+            }
+        }
+        this.pixels = _pixels;
+    }
+
+    public void applyHomogeneous(){
+        int _pixels[] = new int[width * height];
+        for (int i=0;i<height;i++) {
+            for (int j=0;j<width;j++) {
+                Point currentPoint = new Point(j,i);
+                int nNeighbor = 0;
+                double redAccum = 0, greenAccum = 0, blueAccum = 0;
+                RGB currentRGB = convertIntToArgb(pixels[i * width + j]);
+
+                RGB newRGB = new RGB();
+                for (int k=0;k<8;k++) {
+                    Point neighbor = currentPoint.add(Point.direction[k]);
+                    if ((neighbor.x > 0) && (neighbor.y > 0) && (neighbor.x < width) && (neighbor.y < height)) {
+                        nNeighbor++;
+                        int currentRow = neighbor.getY();
+                        int currentCol = neighbor.getX();
+                        RGB neighborRGB = convertIntToArgb(pixels[currentRow * width + currentCol]);
+
+                        if (newRGB.red < Math.abs(currentRGB.red - neighborRGB.red)) {
+                            newRGB.red = Math.abs(currentRGB.red - neighborRGB.red);
+                        }
+                        if (newRGB.green < Math.abs(currentRGB.green - neighborRGB.green)) {
+                            newRGB.green = Math.abs(currentRGB.green - neighborRGB.green);
+                        }
+                        if (newRGB.blue < Math.abs(currentRGB.blue - neighborRGB.blue)) {
+                            newRGB.blue = Math.abs(currentRGB.blue - neighborRGB.blue);
+                        }
+
+                    }
+                }
+
+                _pixels[i * width + j] = convertArgbToInt(newRGB);
+            }
+        }
+        this.pixels = _pixels;
+    }
+
+    public void applyDivergence(){
+        int _pixels[] = new int[width * height];
+        for (int i=0;i<height;i++) {
+            for (int j=0;j<width;j++) {
+                Point currentPoint = new Point(j,i);
+                int nNeighbor = 0;
+                double redAccum = 0, greenAccum = 0, blueAccum = 0;
+                RGB currentRGB = convertIntToArgb(pixels[i * width + j]);
+
+                RGB newRGB = new RGB();
+                if (i == 0 || j == 0 || i == height-1 || j == width-1) continue;
+                RGB neighborRGB1 = convertIntToArgb(pixels[(i-1) * width + (j + 1)]);
+                RGB neighborRGB2 = convertIntToArgb(pixels[(i+1) * width + (j - 1)]);
+                if (newRGB.red < Math.abs(neighborRGB1.red - neighborRGB2.red)) {
+                    newRGB.red = Math.abs(neighborRGB1.red -neighborRGB2.red);
+                }
+                if (newRGB.green < Math.abs(neighborRGB1.green - neighborRGB2.green)) {
+                    newRGB.green = Math.abs(neighborRGB1.green -neighborRGB2.green);
+                }
+                if (newRGB.blue < Math.abs(neighborRGB1.blue - neighborRGB2.blue)) {
+                    newRGB.blue = Math.abs(neighborRGB1.blue -neighborRGB2.blue);
+                }
+
+                neighborRGB1 = convertIntToArgb(pixels[(i) * width + (j + 1)]);
+                neighborRGB2 = convertIntToArgb(pixels[(i) * width + (j - 1)]);
+                if (newRGB.red < Math.abs(neighborRGB1.red - neighborRGB2.red)) {
+                    newRGB.red = Math.abs(neighborRGB1.red -neighborRGB2.red);
+                }
+                if (newRGB.green < Math.abs(neighborRGB1.green - neighborRGB2.green)) {
+                    newRGB.green = Math.abs(neighborRGB1.green -neighborRGB2.green);
+                }
+                if (newRGB.blue < Math.abs(neighborRGB1.blue - neighborRGB2.blue)) {
+                    newRGB.blue = Math.abs(neighborRGB1.blue -neighborRGB2.blue);
+                }
+
+                neighborRGB1 = convertIntToArgb(pixels[(i+1) * width + (j - 1)]);
+                neighborRGB2 = convertIntToArgb(pixels[(i-1) * width + (j + 1)]);
+                if (newRGB.red < Math.abs(neighborRGB1.red - neighborRGB2.red)) {
+                    newRGB.red = Math.abs(neighborRGB1.red -neighborRGB2.red);
+                }
+                if (newRGB.green < Math.abs(neighborRGB1.green - neighborRGB2.green)) {
+                    newRGB.green = Math.abs(neighborRGB1.green -neighborRGB2.green);
+                }
+                if (newRGB.blue < Math.abs(neighborRGB1.blue - neighborRGB2.blue)) {
+                    newRGB.blue = Math.abs(neighborRGB1.blue -neighborRGB2.blue);
+                }
+
+                neighborRGB1 = convertIntToArgb(pixels[(i+1) * width + (j)]);
+                neighborRGB2 = convertIntToArgb(pixels[(i-1) * width + (j)]);
+                if (newRGB.red < Math.abs(neighborRGB1.red - neighborRGB2.red)) {
+                    newRGB.red = Math.abs(neighborRGB1.red -neighborRGB2.red);
+                }
+                if (newRGB.green < Math.abs(neighborRGB1.green - neighborRGB2.green)) {
+                    newRGB.green = Math.abs(neighborRGB1.green -neighborRGB2.green);
+                }
+                if (newRGB.blue < Math.abs(neighborRGB1.blue - neighborRGB2.blue)) {
+                    newRGB.blue = Math.abs(neighborRGB1.blue -neighborRGB2.blue);
+                }
+
+                _pixels[i * width + j] = convertArgbToInt(newRGB);
             }
         }
         this.pixels = _pixels;
