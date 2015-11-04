@@ -54,13 +54,24 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Edge Detect"
-                android:id="@+id/textView4" />
+                android:text="Homogenisasi" />
 
             <ImageView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/postProses"
+                android:id="@+id/postProses1"
+                android:adjustViewBounds="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Divergenisasi" />
+
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/postProses2"
                 android:adjustViewBounds="true" />
 
         </LinearLayout>
