@@ -68,6 +68,11 @@ public class SimpleFace extends AppCompatActivity {
             masky[1] = new Double[]{0., 0., 0.};
             masky[2] = new Double[]{ 1., 1., 1.};
 
+            Double kirch[][] = new Double[3][];
+            kirch[0] = new Double[]{+5.,+5.,+5.};
+            kirch[1] = new Double[]{-3.,+0.,-3.};
+            kirch[2] = new Double[]{-3.,-3.,-3.};
+
             List<Double[][]> masks = new ArrayList<>();
             masks.add(mask); masks.add(masky);
             //nativeBitmap.applyDivergence();
@@ -76,7 +81,11 @@ public class SimpleFace extends AppCompatActivity {
             nativeBitmap2.grayscaleBitmap();
 
             nativeBitmap1.applyFirstOrder(masks);
-            nativeBitmap2.applyDivergence();
+            try {
+                nativeBitmap2.applySecondOrder(kirch);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
 
             praProses.setImageBitmap(bmp);

@@ -330,6 +330,70 @@ public class NativeBitmap {
         this.pixels = _pixels;
     }
 
+    public void applySecondOrder(Double[][] mask_matrix) throws Exception{
+        final int ni[] = {0,0,0,1,2,2,2,1};
+        final int nj[] = {0,1,2,2,2,1,0,0};
+        int result_pixels[] = new int [width * height];
+
+        if (mask_matrix.length != 3 || (mask_matrix[0].length != 3)){
+            throw new Exception("Ukuran mask matrik harus 3 x 3");
+        }
+
+        for(int __rotate = 0; __rotate < 9; __rotate++) {
+            int _pixels[] = new int[width * height];
+            for (int i = 0; i < height; i++) {
+                for (int j = 0; j < width; j++) {
+                    Point currentPoint = new Point(j, i);
+                    int nNeighbor = 0;
+                    double redAccum = 0, greenAccum = 0, blueAccum = 0;
+                    RGB currentRGB = convertIntToArgb(pixels[i * width + j]);
+
+                    double redAccumTemp = 0, greenAccumTemp = 0, blueAccumTemp = 0;
+                    redAccumTemp += currentRGB.red * mask_matrix[1][1];
+                    greenAccumTemp += currentRGB.green * mask_matrix[1][1];
+                    blueAccumTemp += currentRGB.blue * mask_matrix[1][1];
+                    for (int k = 0; k < 8; k++) {
+                        Point neighbor = currentPoint.add(Point.direction[k]);
+                        if ((neighbor.x > 0) && (neighbor.y > 0) && (neighbor.x < width) && (neighbor.y < height)) {
+                            nNeighbor++;
+                            int currentRow = neighbor.getY();
+                            int currentCol = neighbor.getX();
+                            currentRGB = convertIntToArgb(pixels[currentRow * width + currentCol]);
+
+                            int matRow = 1 + Point.direction[k].getY();
+                            int matCol = 1 + Point.direction[k].getX();
+                            redAccumTemp += currentRGB.red * mask_matrix[matRow][matCol];
+                            greenAccumTemp += currentRGB.green * mask_matrix[matRow][matCol];
+                            blueAccumTemp += currentRGB.blue * mask_matrix[matRow][matCol];
+                        }
+                    }
+
+                    RGB rgbAccum = new RGB();
+                    rgbAccum.red = (int) Math.min(255,Math.max(0,redAccumTemp));
+                    rgbAccum.green = (int) Math.min(255,Math.max(0,greenAccumTemp));
+                    rgbAccum.blue = (int) Math.min(255,Math.max(0,blueAccumTemp));
+                    _pixels[i * width + j] = convertArgbToInt(rgbAccum);
+                }
+            }
+            if (__rotate == 0){
+                for(int i = 0; i < width * height; i++){
+                    result_pixels[i] = _pixels[i];
+                }
+            } else {
+                for(int i = 0; i < width * height; i++){
+                    result_pixels[i] = Math.max(result_pixels[i],_pixels[i]);
+                }
+            }
+            //rotate the matrix
+            Double temp = Double.valueOf(mask_matrix[ni[0]][nj[0]]);
+            for(int t = 0; t < 8; t++){
+                mask_matrix[ni[t]][nj[t]] = Double.valueOf(mask_matrix[ni[(t+1)%8]][nj[(t+1)%8]]);
+            }
+            mask_matrix[ni[7]][nj[7]] = temp;
+        }
+        this.pixels = result_pixels;
+    }
+
     public void applyHomogeneous(){
         int _pixels[] = new int[width * height];
         for (int i=0;i<height;i++) {
