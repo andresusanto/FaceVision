@@ -1,6 +1,9 @@
 package com.ganesus.facevision.engine;
 
 import android.graphics.Bitmap;
+import android.util.Log;
+
+import java.util.List;
 
 /**
  * Created by Andre on 10/13/2015.
@@ -260,8 +263,8 @@ public class NativeBitmap {
                         int currentCol = neighbor.getX();
                         currentRGB = convertIntToArgb(pixels[currentRow * width + currentCol]);
 
-                        int matRow = k/3;
-                        int matCol = k%3;
+                        int matRow = 1+Point.direction[k].getY();
+                        int matCol = 1+Point.direction[k].getX();
                         redAccum += currentRGB.red * mask_matrix[matRow][matCol];
                         greenAccum += currentRGB.green * mask_matrix[matRow][matCol];
                         blueAccum += currentRGB.blue * mask_matrix[matRow][matCol];
@@ -269,10 +272,57 @@ public class NativeBitmap {
                 }
 
                 RGB rgbAccum = new RGB();
-
+                Log.d("TAG",redAccum+" "+greenAccum+" "+blueAccum);
                 rgbAccum.red = Math.abs((int) redAccum);
                 rgbAccum.green = Math.abs((int)greenAccum);
                 rgbAccum.blue = Math.abs((int)blueAccum);
+
+                _pixels[i * width + j] = convertArgbToInt(rgbAccum);
+            }
+        }
+        this.pixels = _pixels;
+    }
+
+    public void applyFirstOrder(List<Double[][]> mask_matrixes){
+        int _pixels[] = new int[width * height];
+        for (int i=0;i<height;i++) {
+            for (int j=0;j<width;j++) {
+                Point currentPoint = new Point(j,i);
+                int nNeighbor = 0;
+                double redAccum = 0, greenAccum = 0, blueAccum = 0;
+                RGB currentRGB = convertIntToArgb(pixels[i * width + j]);
+
+                for(int m = 0; m < mask_matrixes.size(); m++){
+                    double redAccumTemp = 0, greenAccumTemp = 0, blueAccumTemp = 0;
+                    Double mask_matrix[][] = mask_matrixes.get(m);
+                    redAccumTemp += currentRGB.red * mask_matrix[1][1];
+                    greenAccumTemp += currentRGB.green * mask_matrix[1][1];
+                    blueAccumTemp += currentRGB.blue * mask_matrix[1][1];
+
+                    for (int k=0;k<8;k++) {
+                        Point neighbor = currentPoint.add(Point.direction[k]);
+                        if ((neighbor.x > 0) && (neighbor.y > 0) && (neighbor.x < width) && (neighbor.y < height)) {
+                            nNeighbor++;
+                            int currentRow = neighbor.getY();
+                            int currentCol = neighbor.getX();
+                            currentRGB = convertIntToArgb(pixels[currentRow * width + currentCol]);
+
+                            int matRow = 1+Point.direction[k].getY();
+                            int matCol = 1+Point.direction[k].getX();
+                            redAccumTemp += currentRGB.red * mask_matrix[matRow][matCol];
+                            greenAccumTemp += currentRGB.green * mask_matrix[matRow][matCol];
+                            blueAccumTemp += currentRGB.blue * mask_matrix[matRow][matCol];
+                        }
+                    }
+                    redAccum+= redAccumTemp * redAccumTemp;
+                    greenAccum += greenAccumTemp  * greenAccumTemp;
+                    blueAccum += blueAccumTemp * blueAccumTemp;
+                }
+
+                RGB rgbAccum = new RGB();
+                rgbAccum.red = (int) Math.sqrt(redAccum);
+                rgbAccum.green = (int) Math.sqrt(greenAccum);
+                rgbAccum.blue = (int) Math.sqrt(blueAccum);
 
                 _pixels[i * width + j] = convertArgbToInt(rgbAccum);
             }

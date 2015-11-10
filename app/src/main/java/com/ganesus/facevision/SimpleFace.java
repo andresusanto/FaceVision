@@ -15,6 +15,9 @@ import android.widget.ImageView;
 
 import com.ganesus.facevision.engine.NativeBitmap;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SimpleFace extends AppCompatActivity {
     private static final int RESULT_LOAD_IMAGE = 121;
 
@@ -54,13 +57,22 @@ public class SimpleFace extends AppCompatActivity {
 
             int w = bmp.getWidth(); int h = bmp.getHeight();
 
-            float mask[][] = new float[3][];
+            Double mask[][] = new Double[3][];
+            Double masky[][] = new Double[3][];
 
-            mask[0] = new float[]{-1, 0, 1};
-            mask[1] = new float[]{-1, 0, 1};
-            mask[2] = new float[]{-1, 0, 1};
+            mask[0] = new Double[]{-1., 0., 1.};
+            mask[1] = new Double[]{-1., 0., 1.};
+            mask[2] = new Double[]{-1., 0., 1.};
 
-            nativeBitmap.applyDivergence();
+            masky[0] = new Double[]{-1.,-1.,-1.};
+            masky[1] = new Double[]{0., 0., 0.};
+            masky[2] = new Double[]{ 1., 1., 1.};
+
+            List<Double[][]> masks = new ArrayList<>();
+            masks.add(mask); masks.add(masky);
+            //nativeBitmap.applyDivergence();
+            //nativeBitmap.applyMask(mask);
+            nativeBitmap.applyFirstOrder(masks);
 
             praProses.setImageBitmap(bmp);
             postProses.setImageBitmap(nativeBitmap.draw());
