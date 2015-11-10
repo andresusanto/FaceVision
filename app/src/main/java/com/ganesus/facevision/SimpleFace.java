@@ -38,7 +38,8 @@ public class SimpleFace extends AppCompatActivity {
 
         if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
             ImageView praProses = (ImageView) findViewById(R.id.praProses);
-            ImageView postProses = (ImageView) findViewById(R.id.postProses);
+            ImageView postProses1 = (ImageView) findViewById(R.id.postProses1);
+            ImageView postProses2 = (ImageView) findViewById(R.id.postProses2);
 
             Uri selectedImage = data.getData();
             String[] filePathColumn = {MediaStore.Images.Media.DATA};
@@ -51,9 +52,8 @@ public class SimpleFace extends AppCompatActivity {
             cursor.close();
 
             Bitmap bmp = BitmapFactory.decodeFile(picturePath);
-            NativeBitmap nativeBitmap = new NativeBitmap(bmp);
-            //nativeBitmap.smooth();
-            nativeBitmap.grayscaleBitmap();
+            NativeBitmap nativeBitmap1 = new NativeBitmap(bmp);
+            NativeBitmap nativeBitmap2 = new NativeBitmap(bmp);
 
             int w = bmp.getWidth(); int h = bmp.getHeight();
 
@@ -72,12 +72,17 @@ public class SimpleFace extends AppCompatActivity {
             masks.add(mask); masks.add(masky);
             //nativeBitmap.applyDivergence();
             //nativeBitmap.applyMask(mask);
-            nativeBitmap.applyFirstOrder(masks);
+            nativeBitmap1.grayscaleBitmap();
+            nativeBitmap2.grayscaleBitmap();
+
+            nativeBitmap1.applyFirstOrder(masks);
+            nativeBitmap2.applyDivergence();
+
 
             praProses.setImageBitmap(bmp);
-            postProses.setImageBitmap(nativeBitmap.draw());
+            postProses1.setImageBitmap(nativeBitmap1.draw());
+            postProses2.setImageBitmap(nativeBitmap2.draw());
 
-            boolean[][] boolImage = nativeBitmap.convertToBoolmage();
 
 
         }
