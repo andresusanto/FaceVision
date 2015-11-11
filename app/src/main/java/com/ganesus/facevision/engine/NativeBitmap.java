@@ -546,6 +546,42 @@ public class NativeBitmap {
         this.pixels = _pixels;
     }
 
+    public int[] convolution(List<Double[][]> mask,int maskWidth,int maskHeight) {
+        int newHeight = (maskHeight - (height-1));
+        int newWidth = (maskWidth - (width-1));
+        int[] newImage = new int [(maskHeight - (height - 1)) * (maskWidth - (width - 1))];
+        for (int i=0;i<newHeight;i++) {
+            for (int j=0;j<newWidth;j++) {
+
+                int redAccum = 0,greenAccum = 0,blueAccum = 0;
+
+                for (int m=0;m<mask.size();m++) {
+                    int currentMaskRed = 0, currentMaskGreen = 0, currentMaskBlue = 0;
+                    for (int k = 0; k < maskHeight; k++) {
+                        for (int l = 0; l < maskWidth; l++) {
+                            RGB currentRGB = convertIntToArgb(pixels[(i+k) * width + (j+l)]);
+
+                            currentMaskRed += currentRGB.red;
+                            currentMaskBlue += currentRGB.blue;
+                            currentMaskGreen += currentRGB.green;
+                        }
+                    }
+                    redAccum += (currentMaskRed * currentMaskRed);
+                    greenAccum += (currentMaskGreen * currentMaskGreen);
+                    blueAccum += (currentMaskBlue * currentMaskBlue);
+                }
+
+                RGB newRGB = new RGB();
+                newRGB.red = (int)Math.sqrt(redAccum);
+                newRGB.green = (int)Math.sqrt(greenAccum);
+                newRGB.blue = (int) Math.sqrt(blueAccum);
+
+                newImage[i * newWidth + j] = convertArgbToInt(newRGB);
+            }
+        }
+
+        return newImage;
+    }
     public void cluster(){
         List<Point> points = new ArrayList<>();
         List<Point> centroids = new ArrayList<>();

@@ -76,4 +76,12 @@
 
         </LinearLayout>
     </ScrollView>
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/spinner"
+        android:layout_below="@+id/scrollView"
+        android:layout_alignParentStart="true" />
+
 </RelativeLayout>

@@ -2,6 +2,7 @@ package com.ganesus.facevision;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -11,7 +12,10 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.Spinner;
 
 import com.ganesus.facevision.engine.NativeBitmap;
 
@@ -21,15 +25,126 @@ import java.util.List;
 public class SimpleFace extends AppCompatActivity {
     private static final int RESULT_LOAD_IMAGE = 121;
 
+    private static final int PREWETT_ALGO = 0;
+    private static final int ROBINSON_ALGO = 1;
+    private static final int ROBERT_ALGO = 2;
+    private static final int KIRSCH_ALGO = 3;
+    private static final int SOBEL_ALGO = 4;
+    private int algorithmChoice;
+
+
+    private List<Double[][]> maskMatrixes = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_simple_face);
+
+        Spinner spinner = (Spinner) findViewById(R.id.spinner);
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.algorithm, android.R.layout.simple_spinner_item);
+        // Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        spinner.setAdapter(adapter);
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long id) {
+                switch(pos) {
+                    case PREWETT_ALGO:
+                        choosePrewitt();
+                        algorithmChoice = PREWETT_ALGO;
+                        break;
+                    case ROBINSON_ALGO:
+                        chooseRobinson();
+                        algorithmChoice = ROBINSON_ALGO;
+                        break;
+                    case ROBERT_ALGO:
+                        chooseRobert();
+                        algorithmChoice = ROBERT_ALGO;
+                        break;
+                    case KIRSCH_ALGO:
+                        chooseKirch();
+                        algorithmChoice = KIRSCH_ALGO;
+                        break;
+                    case SOBEL_ALGO:
+                        chooseSobel();
+                        algorithmChoice = SOBEL_ALGO;
+                        break;
+
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                choosePrewitt();
+            }
+        });
     }
 
     public void prosesImage(View v){
         Intent i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(i, RESULT_LOAD_IMAGE);
+    }
+
+    public void choosePrewitt() {
+        maskMatrixes.clear();
+        Double mask[][] = new Double[3][];
+        Double masky[][] = new Double[3][];
+
+        mask[0] = new Double[]{-1., 0., 1.};
+        mask[1] = new Double[]{-1., 0., 1.};
+        mask[2] = new Double[]{-1., 0., 1.};
+
+        masky[0] = new Double[]{-1.,-1.,-1.};
+        masky[1] = new Double[]{0., 0., 0.};
+        masky[2] = new Double[]{ 1., 1., 1.};
+        maskMatrixes.add(mask);
+        maskMatrixes.add(masky);
+    }
+
+    public void chooseRobinson() {
+
+    }
+
+    public void chooseSobel() {
+        maskMatrixes.clear();
+        Double mask[][] = new Double[3][];
+        Double masky[][] = new Double[3][];
+
+        mask[0] = new Double[]{-1., 0., 1.};
+        mask[1] = new Double[]{-2., 0., 2.};
+        mask[2] = new Double[]{-1., 0., 1.};
+
+        masky[0] = new Double[]{-1.,-2.,-1.};
+        masky[1] = new Double[]{0., 0., 0.};
+        masky[2] = new Double[]{ 1., 2., 1.};
+        maskMatrixes.add(mask);
+        maskMatrixes.add(masky);
+    }
+
+    public void chooseKirch() {
+        Double kirch[][] = new Double[3][];
+        kirch[0] = new Double[]{+5.,+5.,+5.};
+        kirch[1] = new Double[]{-3.,+0.,-3.};
+        kirch[2] = new Double[]{-3.,-3.,-3.};
+        maskMatrixes.add(kirch);
+    }
+
+    public void chooseRobert() {
+        Double mask[][] = new Double[3][];
+        Double masky[][] = new Double[3][];
+        mask[0] = new Double[]{+1., 0., 0.};
+        mask[1] = new Double[]{ 0.,-1., 0.};
+        mask[2] = new Double[]{ 0., 0., 0.};
+
+        masky[0] = new Double[]{ 0.,+1.,0.};
+        masky[1] = new Double[]{-1., 0.,0.};
+        masky[2] = new Double[]{ 0., 0.,0.};
+        maskMatrixes.add(mask);
+        maskMatrixes.add(masky);
     }
 
     @Override
@@ -57,24 +172,6 @@ public class SimpleFace extends AppCompatActivity {
 
             int w = bmp.getWidth(); int h = bmp.getHeight();
 
-            Double mask[][] = new Double[3][];
-            Double masky[][] = new Double[3][];
-
-            mask[0] = new Double[]{-1., 0., 1.};
-            mask[1] = new Double[]{-2., 0., 2.};
-            mask[2] = new Double[]{-1., 0., 1.};
-
-            masky[0] = new Double[]{-1.,-2.,-1.};
-            masky[1] = new Double[]{0., 0., 0.};
-            masky[2] = new Double[]{ 1., 2., 1.};
-
-            Double kirch[][] = new Double[3][];
-            kirch[0] = new Double[]{+5.,+5.,+5.};
-            kirch[1] = new Double[]{-3.,+0.,-3.};
-            kirch[2] = new Double[]{-3.,-3.,-3.};
-
-            List<Double[][]> masks = new ArrayList<>();
-            masks.add(mask); masks.add(masky);
             //nativeBitmap.applyDivergence();
             //nativeBitmap.applyMask(mask);
             nativeBitmap1.grayscaleBitmap();
@@ -83,15 +180,20 @@ public class SimpleFace extends AppCompatActivity {
             for(int i = 0; i < 4; i++)
                 nativeBitmap2.smooth();
 
-            nativeBitmap1.applyFirstOrderMax(masks);
-            nativeBitmap2.applyFirstOrderMax(masks);
-            //nativeBitmap1.applyHomogeneous();
-            //nativeBitmap1.applyDivergence();
-            nativeBitmap2.cluster();
-            try {
-                //nativeBitmap2.applySecondOrder(kirch);
-            } catch (Exception e) {
-                e.printStackTrace();
+            if (algorithmChoice == KIRSCH_ALGO){
+                try {
+                    nativeBitmap1.applySecondOrder(maskMatrixes.get(0));
+                    nativeBitmap2.applySecondOrder(maskMatrixes.get(0));
+                    nativeBitmap2.cluster();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                nativeBitmap1.applyFirstOrderMax(maskMatrixes);
+                nativeBitmap2.applyFirstOrderMax(maskMatrixes);
+                //nativeBitmap1.applyHomogeneous();
+                //nativeBitmap1.applyDivergence();
+                nativeBitmap2.cluster();
             }
 
 
