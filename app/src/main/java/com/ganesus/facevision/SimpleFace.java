@@ -61,12 +61,12 @@ public class SimpleFace extends AppCompatActivity {
             Double masky[][] = new Double[3][];
 
             mask[0] = new Double[]{-1., 0., 1.};
-            mask[1] = new Double[]{-1., 0., 1.};
+            mask[1] = new Double[]{-2., 0., 2.};
             mask[2] = new Double[]{-1., 0., 1.};
 
-            masky[0] = new Double[]{-1.,-1.,-1.};
+            masky[0] = new Double[]{-1.,-2.,-1.};
             masky[1] = new Double[]{0., 0., 0.};
-            masky[2] = new Double[]{ 1., 1., 1.};
+            masky[2] = new Double[]{ 1., 2., 1.};
 
             Double kirch[][] = new Double[3][];
             kirch[0] = new Double[]{+5.,+5.,+5.};
@@ -80,9 +80,16 @@ public class SimpleFace extends AppCompatActivity {
             nativeBitmap1.grayscaleBitmap();
             nativeBitmap2.grayscaleBitmap();
 
-            nativeBitmap1.applyFirstOrder(masks);
+            for(int i = 0; i < 4; i++)
+                nativeBitmap2.smooth();
+
+            nativeBitmap1.applyFirstOrderMax(masks);
+            nativeBitmap2.applyFirstOrderMax(masks);
+            //nativeBitmap1.applyHomogeneous();
+            //nativeBitmap1.applyDivergence();
+            nativeBitmap2.cluster();
             try {
-                nativeBitmap2.applySecondOrder(kirch);
+                //nativeBitmap2.applySecondOrder(kirch);
             } catch (Exception e) {
                 e.printStackTrace();
             }

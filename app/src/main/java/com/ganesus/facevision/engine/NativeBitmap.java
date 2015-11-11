@@ -3,12 +3,15 @@ package com.ganesus.facevision.engine;
 import android.graphics.Bitmap;
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Andre on 10/13/2015.
  */
 public class NativeBitmap {
+    public static final int FIRST_ORDER_SQUARE_ROOT = 1;
+    public static final int FIRST_ORDER_MAX = 2;
     public int pixels[];
     public int width;
     public int height;
@@ -227,7 +230,7 @@ public class NativeBitmap {
                     Point neighbor = currentPoint.add(Point.direction[k]);
                     if ((neighbor.x > 0) && (neighbor.y > 0) && (neighbor.x < width) && (neighbor.y < height)) {
                         nNeighbor++;
-                        RGB currentRGB = convertIntToArgb(pixels[i * width + j]);
+                        RGB currentRGB = convertIntToArgb(pixels[neighbor.getY() * width + neighbor.getX()]);
                         rgbAccum.red += currentRGB.red;
                         rgbAccum.green += currentRGB.green;
                         rgbAccum.blue += currentRGB.blue;
@@ -330,6 +333,53 @@ public class NativeBitmap {
         this.pixels = _pixels;
     }
 
+    public void applyFirstOrderMax(List<Double[][]> mask_matrixes){
+        int _pixels[] = new int[width * height];
+        for (int i=0;i<height;i++) {
+            for (int j=0;j<width;j++) {
+                Point currentPoint = new Point(j,i);
+                int nNeighbor = 0;
+                double redAccum = 0, greenAccum = 0, blueAccum = 0;
+                RGB currentRGB = convertIntToArgb(pixels[i * width + j]);
+
+                for(int m = 0; m < mask_matrixes.size(); m++){
+                    double redAccumTemp = 0, greenAccumTemp = 0, blueAccumTemp = 0;
+                    Double mask_matrix[][] = mask_matrixes.get(m);
+                    redAccumTemp += currentRGB.red * mask_matrix[1][1];
+                    greenAccumTemp += currentRGB.green * mask_matrix[1][1];
+                    blueAccumTemp += currentRGB.blue * mask_matrix[1][1];
+
+                    for (int k=0;k<8;k++) {
+                        Point neighbor = currentPoint.add(Point.direction[k]);
+                        if ((neighbor.x > 0) && (neighbor.y > 0) && (neighbor.x < width) && (neighbor.y < height)) {
+                            nNeighbor++;
+                            int currentRow = neighbor.getY();
+                            int currentCol = neighbor.getX();
+                            currentRGB = convertIntToArgb(pixels[currentRow * width + currentCol]);
+
+                            int matRow = 1+Point.direction[k].getY();
+                            int matCol = 1+Point.direction[k].getX();
+                            redAccumTemp += currentRGB.red * mask_matrix[matRow][matCol];
+                            greenAccumTemp += currentRGB.green * mask_matrix[matRow][matCol];
+                            blueAccumTemp += currentRGB.blue * mask_matrix[matRow][matCol];
+                        }
+                    }
+                    redAccum = Math.max(redAccum,Math.abs(redAccumTemp));
+                    greenAccum = Math.max(greenAccum,Math.abs(greenAccumTemp));
+                    blueAccum = Math.max(blueAccum,Math.abs(blueAccumTemp));
+                }
+
+                RGB rgbAccum = new RGB();
+                rgbAccum.red = (int)redAccum;
+                rgbAccum.green = (int)greenAccum;
+                rgbAccum.blue = (int)blueAccum;
+
+                _pixels[i * width + j] = convertArgbToInt(rgbAccum);
+            }
+        }
+        this.pixels = _pixels;
+    }
+
     public void applySecondOrder(Double[][] mask_matrix) throws Exception{
         final int ni[] = {0,0,0,1,2,2,2,1};
         final int nj[] = {0,1,2,2,2,1,0,0};
@@ -387,7 +437,7 @@ public class NativeBitmap {
             //rotate the matrix
             Double temp = Double.valueOf(mask_matrix[ni[0]][nj[0]]);
             for(int t = 0; t < 8; t++){
-                mask_matrix[ni[t]][nj[t]] = Double.valueOf(mask_matrix[ni[(t+1)%8]][nj[(t+1)%8]]);
+                mask_matrix[ni[t]][nj[t]] = Double.valueOf(mask_matrix[ni[(t + 1) % 8]][nj[(t + 1) % 8]]);
             }
             mask_matrix[ni[7]][nj[7]] = temp;
         }
@@ -496,4 +546,51 @@ public class NativeBitmap {
         this.pixels = _pixels;
     }
 
+    public void cluster(){
+        List<Point> points = new ArrayList<>();
+        List<Point> centroids = new ArrayList<>();
+
+        //mata kiri
+        centroids.add(new Point(width/4,height/2));
+        //mata kanan
+        centroids.add(new Point(3*width/4,height/2));
+        //hidung
+        centroids.add(new Point(width/2,(int) (0.65*height)));
+        //mulut
+        centroids.add(new Point(width / 2, (int) (0.75 * height)));
+
+        //int[][] newPixels = convertToBinary();
+
+        
+        for (int i=0;i<height;i++) {
+            for (int j = 0; j < width; j++) {
+                Point currentPoint = new Point(j, i);
+                if (convertIntToArgb(pixels[i * width + j]).red > 30){
+                    points.add(new Point(j,i));
+                }
+            }
+        }
+
+        KMeans kMeans = new KMeans();
+        List<KMeans.Cluster> clusters = kMeans.computeCluster(centroids, points, 100,height*8);
+        for(int i = 0; i < clusters.size(); i++){
+            KMeans.Cluster cluster = clusters.get(i);
+            RGB rgb = new RGB();
+            if (i == 0){
+                rgb.red = 255;
+            } else if (i == 1){
+                rgb.green = 255;
+            } else if (i == 2){
+                rgb.blue = 255;
+            } else if (i == 3){
+                rgb.red = 128;
+                rgb.green = 128;
+            }
+
+            for(Point point:cluster.pointList){
+                pixels[point.getY() *width + point.getX()] = convertArgbToInt(rgb);
+            }
+        }
+
+    }
 }
