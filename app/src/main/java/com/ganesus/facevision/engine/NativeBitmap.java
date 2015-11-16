@@ -33,11 +33,11 @@ public class NativeBitmap {
         this.height = height;
     }
 
-    private int convertArgbToInt(RGB argb) {
+    public static int convertArgbToInt(RGB argb) {
         return 0xFF000000 | (argb.red << 16) | (argb.green << 8) | (argb.blue);
     }
 
-    private RGB convertIntToArgb(int pixel){
+    public static RGB convertIntToArgb(int pixel){
         RGB ret = new RGB();
 
         ret.red = ((pixel >> 16) & 0xff);
@@ -45,6 +45,36 @@ public class NativeBitmap {
         ret.blue = ((pixel) & 0xff);
 
         return ret;
+    }
+
+    public void drawRects(List<Rectangle> rects){
+        int warna = convertArgbToInt(new RGB(255, 0, 0));
+
+        for (int i = 0 ; i < rects.size(); i ++){
+            Rectangle rectangle = rects.get(i);
+
+            for (int w = rectangle.lt.y; w <= rectangle.rb.y; w++){
+                pixels[getPos(w, rectangle.lt.x)] = warna;
+                pixels[getPos(w, rectangle.lt.x + 1)] = warna;
+                pixels[getPos(w, rectangle.lt.x + 2)] = warna;
+
+
+                pixels[getPos(w, rectangle.rb.x)] = warna;
+                pixels[getPos(w, rectangle.rb.x - 1)] = warna;
+                pixels[getPos(w, rectangle.rb.x - 2)] = warna;
+            }
+
+            for (int h = rectangle.lt.x; h <= rectangle.rb.x; h++){
+                pixels[getPos(rectangle.lt.y, h)] = warna;
+                pixels[getPos(rectangle.lt.y + 1, h)] = warna;
+                pixels[getPos(rectangle.lt.y + 2, h)] = warna;
+
+                pixels[getPos(rectangle.rb.y, h)] = warna;
+                pixels[getPos(rectangle.rb.y - 1, h)] = warna;
+                pixels[getPos(rectangle.rb.y - 2, h)] = warna;
+            }
+
+        }
     }
 
     public void grayscaleBitmap(){
@@ -112,6 +142,10 @@ public class NativeBitmap {
         }
 
         return (threshold1 + threshold2) / 2.0f;
+    }
+
+    private int getPos(int i,int j){
+        return i * width + j;
     }
 
     public int[][] convertToBinary(){
@@ -582,6 +616,7 @@ public class NativeBitmap {
 
         return newImage;
     }
+
     public void cluster(){
         List<Point> points = new ArrayList<>();
         List<Point> centroids = new ArrayList<>();
@@ -630,38 +665,5 @@ public class NativeBitmap {
 
     }
 
-    public List<Rectangle> detectFaces(){
-        boolean[] visited = new boolean[width * height];
-        for(int i = 0; i < height; i++){
-            for(int j = 0; j < width; j++){
-                visited[getPos(i,j)] = false;
-            }
-        }
-        List<Rectangle> result = new ArrayList<>();
-        for (int i=0;i<height;i++) {
-            for (int j = 0; j < width; j++) {
-                if (isSkin(pixels[getPos(i,j)])){
-                    visited[getPos(i,j)] = true;
-                    Point leftTop = new Point(j,i);
-                    Point rightBottom = new Point(j,i);
-                    DFSFace(leftTop,rightBottom,i,j,visited);
-                }
-            }
-        }
-        //TODO impl
-        return result;
-    }
 
-    public void DFSFace(Point leftTop,Point rightBottom,int i,int j,boolean[] visited){
-        //TODO impl
-    }
-
-    public boolean isSkin(int pixel){
-        //TODO impl
-        return true;
-    }
-
-    public int getPos(int i,int j){
-        return i * width + j;
-    }
 }

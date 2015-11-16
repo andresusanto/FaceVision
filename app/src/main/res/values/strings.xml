@@ -12,4 +12,5 @@
         <item>Kirsch</item>
         <item>Sobel</item>
     </string-array>
+    <string name="title_activity_face_counter">FaceCounter</string>
 </resources>

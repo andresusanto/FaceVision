@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.ganesus.facevision" >
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.ganesus.facevision" >
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -25,6 +26,10 @@
         <activity
             android:name=".SimpleFace"
             android:label="@string/title_activity_simple_face" >
+        </activity>
+        <activity
+            android:name=".FaceCounter"
+            android:label="@string/title_activity_face_counter" >
         </activity>
     </application>
 

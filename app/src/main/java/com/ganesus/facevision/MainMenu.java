@@ -11,7 +11,7 @@ public class MainMenu extends AppCompatActivity {
 
 
     public void pilihAktivitas(View v){
-        Intent i = new Intent(this, SimpleFace.class);
+        Intent i = new Intent(this, FaceCounter.class);
         startActivity(i);
     }
 
