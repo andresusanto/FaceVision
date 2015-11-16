@@ -629,4 +629,39 @@ public class NativeBitmap {
         }
 
     }
+
+    public List<Rectangle> detectFaces(){
+        boolean[] visited = new boolean[width * height];
+        for(int i = 0; i < height; i++){
+            for(int j = 0; j < width; j++){
+                visited[getPos(i,j)] = false;
+            }
+        }
+        List<Rectangle> result = new ArrayList<>();
+        for (int i=0;i<height;i++) {
+            for (int j = 0; j < width; j++) {
+                if (isSkin(pixels[getPos(i,j)])){
+                    visited[getPos(i,j)] = true;
+                    Point leftTop = new Point(j,i);
+                    Point rightBottom = new Point(j,i);
+                    DFSFace(leftTop,rightBottom,i,j,visited);
+                }
+            }
+        }
+        //TODO impl
+        return result;
+    }
+
+    public void DFSFace(Point leftTop,Point rightBottom,int i,int j,boolean[] visited){
+        //TODO impl
+    }
+
+    public boolean isSkin(int pixel){
+        //TODO impl
+        return true;
+    }
+
+    public int getPos(int i,int j){
+        return i * width + j;
+    }
 }
