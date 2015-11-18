@@ -617,6 +617,68 @@ public class NativeBitmap {
         return newImage;
     }
 
+    public int[] gaussian(){
+        int size=width*height;
+        int red,green,blue,alpha;
+        int[] newImage=new int[size];
+        RGB rgb=new RGB();
+        for(int it=0;it<size;it++){
+            red=0;green=0;blue=0;alpha=0;
+            int counter=0;
+            for(int x=-1;x<=1;x++)
+                for(int y=-1;y<=1;y++){
+                    int pos=width*y+x+it;
+                    int idx=-1;
+                    if(!(x==0 && y==0) && pos>=0 && pos<size){
+                        if(x==0 && y==1){
+                            if(pos%width==it%width && pos/width==(it/width+1))
+                                idx=pos;
+                        }
+                        else if(x==0 && y==-1){
+                            if(pos%width==it%width && pos/width==(it/width-1))
+                                idx=pos;
+                        }
+                        else if(x==1 && y==0){
+                            if(pos/width==it/width && pos%width==(it+1)%width)
+                                idx=pos;
+                        }
+                        else if (x==-1 && y==0){
+                            if(pos/width==it/width && pos%width==(it-1)%width)
+                                idx=pos;
+                        }
+                        else{
+                            if(pos/width!=it/width && pos%width!=it%width)
+                                if(it%width==0){
+                                    if(pos%width!=width-1)
+                                        idx=pos;
+                                }
+                                else if(it%width==width-1){
+                                    if(pos%width!=0)
+                                        idx=pos;
+                                }
+                                else
+                                    idx=pos;
+                        }
+                    }
+                    if(idx!=-1){
+                        rgb=convertIntToArgb(pixels[idx]);
+                        red+=rgb.red;
+                        green+=rgb.green;
+                        blue+=rgb.blue;
+                        alpha+=rgb.alpha;
+                        counter++;
+                    }
+                }
+            rgb.red=red/counter;
+            rgb.green=green/counter;
+            rgb.blue=blue/counter;
+            rgb.alpha=alpha/counter;
+            System.out.println("Red:"+rgb.red+"||Green:"+rgb.green+"||Blue:"+rgb.blue);
+            newImage[it]=convertArgbToInt(rgb);
+        }
+        return newImage;
+    }
+
     public void cluster(){
         List<Point> points = new ArrayList<>();
         List<Point> centroids = new ArrayList<>();
