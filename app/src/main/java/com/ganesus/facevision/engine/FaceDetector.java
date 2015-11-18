@@ -24,16 +24,6 @@ public class FaceDetector {
     }
 
     public List<Rectangle> detectFaces(){
-        /*for (int i = 0; i< this.nativeBitmap.height; i++) {
-            for (int j = 0; j < this.nativeBitmap.width; j++) {
-                if (isSkin(NativeBitmap.convertIntToArgb(this.nativeBitmap.pixels[getPos(i,j)]))){
-                    this.nativeBitmap.pixels[getPos(i,j)] = NativeBitmap.convertArgbToInt(new NativeBitmap.RGB(255,255,255));
-                }
-            }
-        }
-        return null;*/
-
-
         boolean[] visited = new boolean[this.nativeBitmap.width * this.nativeBitmap.height];
 
         List<Rectangle> result = new ArrayList<>();
@@ -107,7 +97,6 @@ public class FaceDetector {
             }
         }while(proses.size() > 0);
 
-        //TODO impl
     }
 
     private boolean imageRange(int i, int j){
@@ -124,6 +113,7 @@ public class FaceDetector {
 
         rgb.add(new NativeBitmap.RGB(97,81,59));
         rgb.add(new NativeBitmap.RGB(134,113,86));
+        rgb.add(new NativeBitmap.RGB(111,105,71));
 
         double curentMin = colorDistance(pixel, rgb.get(0));
 
