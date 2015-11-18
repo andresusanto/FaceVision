@@ -11,7 +11,7 @@ import java.util.Stack;
  * Created by Andre on 11/16/2015.
  */
 public class FaceDetector {
-    private static final double THRESHOLD_WARNA = 110.0;
+    private static final double THRESHOLD_WARNA = 90.0;
 
     private NativeBitmap nativeBitmap;
 
@@ -56,7 +56,7 @@ public class FaceDetector {
             int i = point.x; int j = point.y;
 
             visited[getPos(i,j)] = true;
-            //this.nativeBitmap.pixels[getPos(i,j)] = NativeBitmap.convertArgbToInt(new NativeBitmap.RGB(255,255,255));
+            this.nativeBitmap.pixels[getPos(i,j)] = NativeBitmap.convertArgbToInt(new NativeBitmap.RGB(255,255,255));
 
             if (rect.lt.y > i) rect.lt.y = i;
             if (rect.lt.x > j) rect.lt.x = j;
@@ -109,11 +109,22 @@ public class FaceDetector {
     }
 
     public boolean isSkin(NativeBitmap.RGB pixel){
-        List<NativeBitmap.RGB> rgb = new ArrayList<>();
+        if (pixel.red > pixel.green && pixel.green > pixel.blue){
+            if (pixel.red > 180) return false;
+            if (pixel.red < 85) return  false;
+            if (pixel.green > 160) return  false;
+            if (pixel.green < 70) return false;
+            if (pixel.red > 120) return false;
+            if (pixel.red < 60) return false;
+            return true;
+        }else{
+            return false;
+        }
+        /*List<NativeBitmap.RGB> rgb = new ArrayList<>();
 
-        rgb.add(new NativeBitmap.RGB(97,81,59));
-        rgb.add(new NativeBitmap.RGB(134,113,86));
-        rgb.add(new NativeBitmap.RGB(111,105,71));
+        rgb.add(new NativeBitmap.RGB(82,70,46));
+        rgb.add(new NativeBitmap.RGB(100,90,65));
+        rgb.add(new NativeBitmap.RGB(175,151,117));
 
         double curentMin = colorDistance(pixel, rgb.get(0));
 
@@ -123,6 +134,6 @@ public class FaceDetector {
         }
 
         if (curentMin < THRESHOLD_WARNA) return true;
-        return false;
+        return false;*/
     }
 }

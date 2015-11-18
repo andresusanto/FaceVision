@@ -21,7 +21,7 @@ public class Rectangle {
     }
 
     public  boolean isBigEnough(){
-        if ((rb.x - lt.x) * (rb.y - lt.y) > 3000)
+        if ((rb.x - lt.x) * (rb.y - lt.y) > 7000)
             return true;
         return  false;
     }
