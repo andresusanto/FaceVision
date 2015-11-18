@@ -662,7 +662,78 @@ public class NativeBitmap {
                 pixels[point.getY() *width + point.getX()] = convertArgbToInt(rgb);
             }
         }
+    }
 
+    public RGB[][] getRGBMap() {
+        RGB[][] rgbMap = new RGB[height][];
+        for (int i=0;i<height;i++) {
+            rgbMap[i] = new RGB[width];
+        }
+
+        for (int i=0;i<height;i++) {
+            for (int j=0;j<width;j++) {
+                rgbMap[i][j] = convertIntToArgb(pixels[i * width + j]);
+            }
+        }
+
+        return rgbMap;
+    }
+
+    public YCbCr[][] getYCbCr() {
+        YCbCr[][] yCbCr = new YCbCr[height][];
+
+        for (int i=0;i<height;i++) {
+            yCbCr[i] = new YCbCr[width];
+        }
+
+        float[][] transformMat = new float[3][];
+        for (int i=0;i<3;i++) {
+            transformMat[i] = new float[3];
+        }
+
+        transformMat[0][0] = 65.481f;
+        transformMat[0][1] = 128.553f;
+        transformMat[0][2] = 24.966f;
+
+        transformMat[1][0] = - 37.797f;
+        transformMat[1][1] = -74.203f;
+        transformMat[1][2] = 112;
+
+        transformMat[2][0] = 112;
+        transformMat[2][1] = -93786f;
+        transformMat[2][2] = -18.214f;
+
+        float[] transformSum = new float[3];
+        transformSum[0] = 16;
+        transformSum[1] = 128;
+        transformSum[2] = 128;
+
+        for (int i=0;i<height;i++) {
+            for (int j=0;j<width;j++) {
+                RGB currentRGB = convertIntToArgb(pixels[i * width + j]);
+
+                yCbCr[i][j].Y = 0;
+                for (int k=0;k<3;k++) {
+                    yCbCr[i][j].Y += transformMat[0][k] * currentRGB.red;
+                }
+                yCbCr[i][j].Y += transformSum[0];
+
+                yCbCr[i][j].Cb = 0;
+                for (int k=0;k<3;k++) {
+                    yCbCr[i][j].Cb += transformMat[1][k] * currentRGB.green;
+                }
+                yCbCr[i][j].Cb += transformSum[1];
+
+                yCbCr[i][j].Cr = 0;
+                for (int k=0;k<3;k++) {
+                    yCbCr[i][j].Cr += transformMat[2][k] * currentRGB.blue;
+                }
+                yCbCr[i][j].Cr += transformSum[2];
+
+            }
+        }
+
+        return yCbCr;
     }
 
 

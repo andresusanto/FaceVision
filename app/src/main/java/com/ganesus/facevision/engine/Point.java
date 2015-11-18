@@ -36,6 +36,11 @@ public class Point {
         this.y = point.y;
     }
 
+    public void setPoint(int x,int y) {
+        this.x = x;
+        this.y = y;
+    }
+
     Point add(Point other) {
         return new Point(x + other.x, y + other.y);
     }
