@@ -36,6 +36,7 @@ public class FaceCounter extends AppCompatActivity {
 
         if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
             ImageView deteksi = (ImageView) findViewById(R.id.deteksi);
+            ImageView original = (ImageView) findViewById(R.id.original);
 
             Uri selectedImage = data.getData();
             String[] filePathColumn = {MediaStore.Images.Media.DATA};
@@ -55,6 +56,7 @@ public class FaceCounter extends AppCompatActivity {
             faceDetector.detectFaces();
 
             deteksi.setImageBitmap(nativeBitmap1.draw());
+            original.setImageBitmap(bmp);
 
         }
     }
