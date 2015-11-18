@@ -1,5 +1,14 @@
 package com.ganesus.facevision.engine;
 
+import android.content.Context;
+
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
 /**
  * Created by kevinyu on 11/18/15.
  */
@@ -10,6 +19,8 @@ public class CbCrMap {
     static final int SIZE = 256;
     static final float[][] transformMat;
     static final float[] transformSum;
+
+    static final String FILENAME = "Color_Map";
 
     static {
         transformMat = new float[3][];
@@ -45,7 +56,7 @@ public class CbCrMap {
     public void reset() {
         for (int i=0;i<=SIZE;i++) {
             for (int j=0;j<=SIZE;i++) {
-                map[i][j] = false
+                map[i][j] = false;
             }
         }
     }
@@ -113,4 +124,56 @@ public class CbCrMap {
         return result;
     }
 
+    public void save(Context context) {
+        StringBuilder sb = new StringBuilder();
+
+        for (int i=0;i<=SIZE;i++) {
+            for (int j=0;j<=SIZE;j++) {
+                if (map[i][j] == true) {
+                    sb.append("1");
+                }else sb.append("0");
+            }
+        }
+
+        try {
+            FileOutputStream fos = context.openFileOutput(FILENAME, Context.MODE_PRIVATE);
+            fos.write(sb.toString().getBytes());
+            fos.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void load(Context context) {
+        FileInputStream fis = null;
+        try {
+            fis = context.openFileInput(FILENAME);
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader bufferedReader = new BufferedReader(isr);
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                sb.append(line);
+            }
+
+            String colorMapString = sb.toString();
+            for (int i=0;i<=SIZE;i++) {
+                for (int j=0;j<=SIZE;j++) {
+                    char chr = colorMapString.charAt(i*SIZE + j);
+                    if (chr == '1') {
+                        map[i][j] = true;
+                    } else if (chr == '0') {
+                        map[i][j] = false;
+                    }
+                }
+            }
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
 }
