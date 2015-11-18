@@ -56,7 +56,7 @@ public class FaceDetector {
             int i = point.x; int j = point.y;
 
             visited[getPos(i,j)] = true;
-            this.nativeBitmap.pixels[getPos(i,j)] = NativeBitmap.convertArgbToInt(new NativeBitmap.RGB(255,255,255));
+            //this.nativeBitmap.pixels[getPos(i,j)] = NativeBitmap.convertArgbToInt(new NativeBitmap.RGB(255,255,255));
 
             if (rect.lt.y > i) rect.lt.y = i;
             if (rect.lt.x > j) rect.lt.x = j;
