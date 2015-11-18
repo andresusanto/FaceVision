@@ -36,7 +36,7 @@ public class FaceDetector {
 
                     visited[getPos(i,j)] = true;
                     DFSFace(i, j, visited, rect);
-                    if (rect.getScale() < 1.25 && rect.getScale() > 0.9 && rect.isBigEnough()) result.add(rect);
+                    if (rect.getScale() < 1.55 && rect.getScale() > 0.9 && rect.isBigEnough()) result.add(rect);
                 }
             }
         }
@@ -115,7 +115,7 @@ public class FaceDetector {
             if (pixel.green > 160) return  false;
             if (pixel.green < 70) return false;
             if (pixel.red > 120) return false;
-            if (pixel.red < 60) return false;
+            if (pixel.red < 65) return false;
             return true;
         }else{
             return false;
