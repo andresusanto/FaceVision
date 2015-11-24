@@ -830,8 +830,10 @@ public class NativeBitmap {
                 RGB currentRGB = convertIntToArgb(pixels[i * width + j]);
                 int totalDelta = Math.abs(currentRGB.red - currentRGB.green) +
                         Math.abs(currentRGB.green - currentRGB.blue);
-                if (totalDelta < 25 && j < minPoint.x) minPoint.setPoint(j,i);
-                if (totalDelta < 25 && j > maxPoint.x) maxPoint.setPoint(j,i);
+                if (currentRGB. red > 50 && totalDelta < 25) {
+                    if (j < minPoint.x) minPoint.setPoint(j, i);
+                    if (j > maxPoint.x) maxPoint.setPoint(j, i);
+                }
             }
         }
         points.add(minPoint);
