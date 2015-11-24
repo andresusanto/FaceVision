@@ -15,6 +15,11 @@ public class Point {
         this.y = y;
     }
 
+    public Point(Point otherPoint) {
+        this.x = otherPoint.x;
+        this.y = otherPoint.y;
+    }
+
     public int getX() {
         return x;
     }
