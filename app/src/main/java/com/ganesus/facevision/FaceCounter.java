@@ -35,9 +35,8 @@ public class FaceCounter extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
-            ImageView praProses = (ImageView) findViewById(R.id.praProses);
-            ImageView postProses1 = (ImageView) findViewById(R.id.postProses1);
-            ImageView postProses2 = (ImageView) findViewById(R.id.postProses2);
+            ImageView deteksi = (ImageView) findViewById(R.id.deteksi);
+            ImageView original = (ImageView) findViewById(R.id.original);
 
             Uri selectedImage = data.getData();
             String[] filePathColumn = {MediaStore.Images.Media.DATA};
@@ -51,22 +50,13 @@ public class FaceCounter extends AppCompatActivity {
 
             Bitmap bmp = BitmapFactory.decodeFile(picturePath);
             NativeBitmap nativeBitmap1 = new NativeBitmap(bmp);
-            NativeBitmap nativeBitmap2 = new NativeBitmap(bmp);
-
-            /*nativeBitmap1.smooth();
-            nativeBitmap1.smooth();
-            nativeBitmap1.smooth();
-            nativeBitmap1.smooth();*/
 
 
             FaceDetector faceDetector = new FaceDetector(nativeBitmap1);
             faceDetector.detectFaces();
 
-            praProses.setImageBitmap(bmp);
-            postProses1.setImageBitmap(nativeBitmap1.draw());
-            postProses2.setImageBitmap(nativeBitmap2.draw());
-
-
+            deteksi.setImageBitmap(nativeBitmap1.draw());
+            original.setImageBitmap(bmp);
 
         }
     }

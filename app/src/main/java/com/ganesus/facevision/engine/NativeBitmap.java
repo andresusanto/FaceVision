@@ -3,6 +3,7 @@ package com.ganesus.facevision.engine;
 import android.graphics.Bitmap;
 import android.util.Log;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -614,6 +615,90 @@ public class NativeBitmap {
             }
         }
 
+        return newImage;
+    }
+
+    //Gu Kernel 3x3
+    public double[] createGuKernel(double dev){
+        double max=0;
+        DecimalFormat df = new DecimalFormat("#.##");
+        double[] guKernel=new double[3*3];
+        for(int i=-1;i<=1;i++)
+            for(int j=-1;j<=1;j++){
+                double power=Math.pow(Math.E,-(i*i+j*j)/(2*dev*dev));
+                double val=power/(2*Math.PI*dev*dev);
+                guKernel[3*j+i+4]=val;
+                if(val>max)max=val;
+            }
+        for(int i=0;i<9;i++)
+            guKernel[i]=Math.round(guKernel[i]/max * 100.0) / 100.0;
+        return guKernel;
+    }
+
+
+    public int[] gaussian(){
+        int size=width*height;
+        double red,green,blue,alpha;
+        int[] newImage=new int[size];
+        RGB rgb=new RGB();
+        double[] gukernel=createGuKernel(1.5);
+        for(int it=0;it<size;it++){
+            red=0.0;green=0.0;blue=0.0;alpha=0.0;
+            int counter=0;
+            for(int x=-1;x<=1;x++)
+                for(int y=-1;y<=1;y++){
+                    int pos=width*y+x+it;
+                    int idx=-1;
+                    if(!(x==0 && y==0) && pos>=0 && pos<size){
+                        if(x==0 && y==1){
+                            if(pos%width==it%width && pos/width==(it/width+1))
+                                idx=pos;
+                        }
+                        else if(x==0 && y==-1){
+                            if(pos%width==it%width && pos/width==(it/width-1))
+                                idx=pos;
+                        }
+                        else if(x==1 && y==0){
+                            if(pos/width==it/width && pos%width==(it+1)%width)
+                                idx=pos;
+                        }
+                        else if (x==-1 && y==0){
+                            if(pos/width==it/width && pos%width==(it-1)%width)
+                                idx=pos;
+                        }
+                        else{
+                            if(pos/width!=it/width && pos%width!=it%width)
+                                if(it%width==0){
+                                    if(pos%width!=width-1)
+                                        idx=pos;
+                                }
+                                else if(it%width==width-1){
+                                    if(pos%width!=0)
+                                        idx=pos;
+                                }
+                                else
+                                    idx=pos;
+                        }
+                    }
+                    if(idx!=-1){
+                        rgb=convertIntToArgb(pixels[idx]);
+                        double factor=gukernel[3*y+x+4];
+                        red+=(double)rgb.red*factor;
+                        green+=(double)rgb.green*factor;
+                        blue+=(double)rgb.blue*factor;
+                        System.out.println(rgb.blue+"*"+factor);
+                        alpha+=(double)rgb.alpha*factor;
+                        counter++;
+                    }
+                }
+            System.out.println(blue+"/"+counter);
+            rgb.red=(int)red/counter;
+            rgb.green=(int)green/counter;
+            rgb.blue=(int)blue/counter;
+            rgb.alpha=(int)alpha/counter;
+            System.out.println("Red:"+rgb.red+"||Green:"+rgb.green+"||Blue:"+rgb.blue);
+            newImage[it]=convertArgbToInt(rgb);
+        }
         return newImage;
     }
 

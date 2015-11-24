@@ -11,7 +11,7 @@ import java.util.Stack;
  * Created by Andre on 11/16/2015.
  */
 public class FaceDetector {
-    private static final double THRESHOLD_WARNA = 110.0;
+    private static final double THRESHOLD_WARNA = 90.0;
 
     private NativeBitmap nativeBitmap;
 
@@ -24,16 +24,6 @@ public class FaceDetector {
     }
 
     public List<Rectangle> detectFaces(){
-        /*for (int i = 0; i< this.nativeBitmap.height; i++) {
-            for (int j = 0; j < this.nativeBitmap.width; j++) {
-                if (isSkin(NativeBitmap.convertIntToArgb(this.nativeBitmap.pixels[getPos(i,j)]))){
-                    this.nativeBitmap.pixels[getPos(i,j)] = NativeBitmap.convertArgbToInt(new NativeBitmap.RGB(255,255,255));
-                }
-            }
-        }
-        return null;*/
-
-
         boolean[] visited = new boolean[this.nativeBitmap.width * this.nativeBitmap.height];
 
         List<Rectangle> result = new ArrayList<>();
@@ -46,7 +36,7 @@ public class FaceDetector {
 
                     visited[getPos(i,j)] = true;
                     DFSFace(i, j, visited, rect);
-                    if (rect.getScale() < 1.25 && rect.getScale() > 0.9 && rect.isBigEnough()) result.add(rect);
+                    if (rect.getScale() < 1.55 && rect.getScale() > 0.9 && rect.isBigEnough()) result.add(rect);
                 }
             }
         }
@@ -107,7 +97,6 @@ public class FaceDetector {
             }
         }while(proses.size() > 0);
 
-        //TODO impl
     }
 
     private boolean imageRange(int i, int j){
@@ -120,10 +109,22 @@ public class FaceDetector {
     }
 
     public boolean isSkin(NativeBitmap.RGB pixel){
-        List<NativeBitmap.RGB> rgb = new ArrayList<>();
+        if (pixel.red > pixel.green && pixel.green > pixel.blue){
+            if (pixel.red > 180) return false;
+            if (pixel.red < 85) return  false;
+            if (pixel.green > 160) return  false;
+            if (pixel.green < 70) return false;
+            if (pixel.red > 120) return false;
+            if (pixel.red < 65) return false;
+            return true;
+        }else{
+            return false;
+        }
+        /*List<NativeBitmap.RGB> rgb = new ArrayList<>();
 
-        rgb.add(new NativeBitmap.RGB(97,81,59));
-        rgb.add(new NativeBitmap.RGB(134,113,86));
+        rgb.add(new NativeBitmap.RGB(82,70,46));
+        rgb.add(new NativeBitmap.RGB(100,90,65));
+        rgb.add(new NativeBitmap.RGB(175,151,117));
 
         double curentMin = colorDistance(pixel, rgb.get(0));
 
@@ -133,6 +134,6 @@ public class FaceDetector {
         }
 
         if (curentMin < THRESHOLD_WARNA) return true;
-        return false;
+        return false;*/
     }
 }
