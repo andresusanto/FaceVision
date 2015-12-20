@@ -16,11 +16,18 @@ public class MainMenu extends AppCompatActivity {
 
         switch (kode){
             case 1:
-                i = new Intent(this, SimpleFace.class);
+                i = new Intent(this, FaceEdgeActivity.class);
                 break;
             case 2:
                 i = new Intent(this, SimpleFace.class);
                 break;
+            case 3:
+                i = new Intent(this, FaceCounter.class);
+                break;
+            case 4:
+                i = new Intent(this, FFTActivity.class);
+                break;
+
         }
 
         startActivity(i);

@@ -22,7 +22,7 @@
     <Button
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:tag="1"
+        android:tag="2"
         android:text="K-Means Clustering"
         android:id="@+id/button1"
         android:layout_below="@+id/button"
@@ -32,7 +32,7 @@
     <Button
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:tag="1"
+        android:tag="3"
         android:text="Face Counter"
         android:id="@+id/button2"
         android:layout_below="@+id/button1"
@@ -42,8 +42,8 @@
     <Button
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:tag="1"
-        android:text="Simple Face Detection"
+        android:tag="4"
+        android:text="Fast Fourier Transform"
         android:id="@+id/button3"
         android:layout_below="@+id/button2"
         android:layout_alignParentStart="true"
