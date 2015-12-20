@@ -91,7 +91,7 @@ public class FFTActivity extends ActionBarActivity {
         }
     }
 
-    public void clickSharpengin(View v) {
+    public void clickSharpening(View v) {
         if (nativeBitmap != null) {
             previousImage.setImageBitmap(nativeBitmap.draw());
             fft.FFTMapToPixels(fftMap, fftBitmap);
