@@ -16,5 +16,6 @@
 
     <string name="title_activity_face_counter">FaceCounter</string>
     <string name="title_activity_fft">FFTActivity</string>
+    <string name="title_activity_face_edge">FaceEdgeActivity</string>
 
 </resources>

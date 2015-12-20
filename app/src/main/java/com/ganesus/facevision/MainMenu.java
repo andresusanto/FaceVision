@@ -11,9 +11,21 @@ public class MainMenu extends AppCompatActivity {
 
 
     public void pilihAktivitas(View v){
-        Intent i = new Intent(this, SimpleFace.class);
+        int kode = Integer.parseInt(v.getTag().toString());
+        Intent i = null;
+
+        switch (kode){
+            case 1:
+                i = new Intent(this, SimpleFace.class);
+                break;
+            case 2:
+                i = new Intent(this, SimpleFace.class);
+                break;
+        }
+
         startActivity(i);
     }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
