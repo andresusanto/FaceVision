@@ -31,6 +31,10 @@
             android:name=".FaceCounter"
             android:label="@string/title_activity_face_counter" >
         </activity>
+        <activity
+            android:name=".FFTActivity"
+            android:label="@string/title_activity_fft" >
+        </activity>
     </application>
 
 </manifest>

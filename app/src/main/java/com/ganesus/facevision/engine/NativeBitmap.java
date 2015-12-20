@@ -34,6 +34,50 @@ public class NativeBitmap {
         this.height = height;
     }
 
+    public NativeBitmap(short[] greyValues, int width, int height) {
+        this.width = width;
+        this.height = height;
+
+        pixels = new int[width * height];
+
+        RGB rgb = new RGB();
+
+        for (int i=0;i<height;i++) {
+            for (int j=0;j<width;j++) {
+
+                short greyValue = greyValues[i * width + j];
+                rgb.red = greyValue;
+                rgb.green = greyValue;
+                rgb.blue = greyValue;
+
+                System.out.println(i + " " + j + " " + greyValue);
+
+                pixels[i * width + j] = convertArgbToInt(rgb);
+            }
+        }
+    }
+
+    public NativeBitmap(float[] greyValues, int width, int height) {
+        this.width = width;
+        this.height = height;
+
+        pixels = new int[width * height];
+
+        RGB rgb = new RGB();
+
+        for (int i=0;i<height;i++) {
+            for (int j=0;j<width;j++) {
+
+                short greyValue = (short)greyValues[i * width + j];
+                rgb.red = greyValue;
+                rgb.green = greyValue;
+                rgb.blue = greyValue;
+
+                pixels[i * width + j] = convertArgbToInt(rgb);
+            }
+        }
+    }
+
     public static int convertArgbToInt(RGB argb) {
         return 0xFF000000 | (argb.red << 16) | (argb.green << 8) | (argb.blue);
     }
@@ -762,6 +806,22 @@ public class NativeBitmap {
         }
 
         return rgbMap;
+    }
+
+    public short[] getGrayValue() {
+        short[] greyValues = new short[width * height];
+
+        for (int i=0;i<height;i++) {
+            for (int j=0;j<width;j++) {
+                RGB bitmapColor = convertIntToArgb(pixels[i * width + j]);
+
+                short grayscaleColor = (short)(0.2989f * bitmapColor.red + 0.5870f * bitmapColor.green + 0.1141 * bitmapColor.blue);
+
+                greyValues[i * width + j] = grayscaleColor;
+            }
+        }
+
+        return greyValues;
     }
 
     public YCbCr[][] getYCbCr() {
