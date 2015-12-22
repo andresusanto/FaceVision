@@ -40,24 +40,6 @@
 
             </LinearLayout>
 
-            <Button
-                android:text="Low Pass"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="clickLowPass"/>
-
-            <Button
-                android:text="High Pass"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="clickHighPass"/>
-
-            <Button
-                android:text="Sharpening"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="clickSharpening"/>
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -90,9 +72,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Deteksi Wajah"
+                android:text="Filter Wajah"
                 android:id="@+id/textView3" />
 
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Low Pass"/>
 
 
             <LinearLayout
@@ -104,14 +92,68 @@
                     android:layout_weight="1"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:id="@+id/afterImage"
+                    android:id="@+id/afterImageLowPass"
                     android:adjustViewBounds="true" />
 
                 <ImageView
                     android:layout_weight="1"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:id="@+id/afterFFT"
+                    android:id="@+id/afterFFTLowPass"
+                    android:adjustViewBounds="true" />
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="High Pass"/>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/afterImageHighPass"
+                    android:adjustViewBounds="true" />
+
+                <ImageView
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/afterFFTHighPass"
+                    android:adjustViewBounds="true" />
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Sharpening"/>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/afterImageSharpening"
+                    android:adjustViewBounds="true" />
+
+                <ImageView
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/afterFFTSharpening"
                     android:adjustViewBounds="true" />
 
             </LinearLayout>

@@ -5,13 +5,28 @@ package com.ganesus.facevision.engine;
  */
 public class FFT {
 
-    public class FFTMap {
+    public static class FFTMap {
 
         public FFTMap(int width, int height) {
             this.width = width;
             this.height = height;
             real = new float[width * height];
             imaginer = new float[width * height];
+        }
+
+        public FFTMap(FFTMap fftMap) {
+            this.width = fftMap.width;
+            this.height = fftMap.height;
+
+            real = new float[width * height];
+            imaginer = new float[width * height];
+
+            for (int i=0;i<height;i++) {
+                for (int j=0;j<width;j++) {
+                    real [i * width + j] = fftMap.real[i * width + j];
+                    imaginer [i * width + j] = fftMap.imaginer[i * width + j];
+                }
+            }
         }
 
         public float[] real;
